@@ -14,3 +14,7 @@ The “document” is saved as a JSON file to my desktop in between runs. At the
 
 It’s all very rough-and-ready ...
 
+![A screenshot](https://storage.googleapis.com/charlierobin-1245.appspot.com/images/work/blendingModesTesterScreenshot.jpg)
+
+
+
