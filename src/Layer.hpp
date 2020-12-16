@@ -4,6 +4,8 @@
 #include "cinder/Json.h"
 #include "cinder/CinderImGui.h"
 
+#include "LayerActions.h"
+
 class Layer {
     
 public:
@@ -13,9 +15,9 @@ public:
     Layer( std::string, std::string );
     Layer ( cinder::JsonTree );
     
-    bool gui( int );
+    LayerActions gui( bool, bool );
     
-    virtual bool customGUI( int, bool );
+    virtual bool customGUI( bool );
     
     void compositeOnTo( cinder::Surface * );
     
@@ -29,7 +31,13 @@ private:
     
     std::string layerType_;
     
+    std::string generateUUID();
+    
+    bool expanded_;
+    
 protected:
+    
+    std::string id_;
     
     std::string layerName_;
     bool visible_;

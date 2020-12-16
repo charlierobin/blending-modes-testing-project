@@ -57,6 +57,7 @@
 		CBE76F912589058E00F68CB0 /* LayerFile.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LayerFile.hpp; path = ../src/LayerFile.hpp; sourceTree = "<group>"; };
 		CBF64DF02587691B00933461 /* Layer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Layer.cpp; path = ../src/Layer.cpp; sourceTree = "<group>"; };
 		CBF64DF12587691B00933461 /* Layer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Layer.hpp; path = ../src/Layer.hpp; sourceTree = "<group>"; };
+		CBF8D32A258A727500B787EC /* LayerActions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = LayerActions.h; path = ../src/LayerActions.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -102,6 +103,7 @@
 				CB0020962589F00A0086C93C /* LayerCheckerBoard.hpp */,
 				CB0020982589F2DA0086C93C /* LayerGradient.cpp */,
 				CB0020992589F2DA0086C93C /* LayerGradient.hpp */,
+				CBF8D32A258A727500B787EC /* LayerActions.h */,
 			);
 			name = Source;
 			sourceTree = "<group>";

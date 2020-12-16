@@ -29,12 +29,9 @@ SurfaceRef LayerSolid::render()
     return surface;
 }
 
-bool LayerSolid::customGUI( int i, bool dirty )
+bool LayerSolid::customGUI( bool dirty )
 {
-    if ( ImGui::ColorPicker3( "Colour", &colour_ ) )
-    {
-        dirty = true;
-    }
+    if ( ImGui::ColorPicker3( "Colour", &colour_ ) ) dirty = true;
     
     return dirty;
 }

@@ -44,7 +44,7 @@ SurfaceRef LayerFile::render()
     return surface;
 }
 
-bool LayerFile::customGUI( int i, bool dirty )
+bool LayerFile::customGUI( bool dirty )
 {
     vec4 filePathTextColour = vec4( 0, 1, 0, 1 );
     

@@ -8,10 +8,14 @@
 
 #include "cinder/ip/Fill.h"
 
+#include "LayerActions.h"
+
 #include "LayerSolid.hpp"
 #include "LayerFile.hpp"
 #include "LayerCheckerBoard.hpp"
 #include "LayerGradient.hpp"
+
+#include <string.h>
 
 using namespace ci;
 using namespace ci::app;
@@ -33,6 +37,8 @@ private:
     
     Color backgroundColour_ = Color::black();
     
+    bool backgroundExpanded_ = false;
+    
     vector<Layer*> layers_;
     
     bool dirty_ = true;
@@ -44,13 +50,15 @@ void BlendingModesProjectApp::setup()
 {
     ImGui::Initialize();
     
-    JsonTree json;
+    string homeDir = getenv( "HOME" );
     
-    ifstream jsonFile( "/Users/charlie/Desktop/test.json" );
+    ifstream jsonFile( homeDir + "/Desktop/test.json" );
+    
+    JsonTree json;
     
     if ( jsonFile.is_open() )
     {
-        std::string jsonFileAsString( ( std::istreambuf_iterator<char>( jsonFile ) ), std::istreambuf_iterator<char>() );
+        string jsonFileAsString( ( istreambuf_iterator<char>( jsonFile ) ), istreambuf_iterator<char>() );
         
         jsonFile.close();
         
@@ -76,6 +84,8 @@ void BlendingModesProjectApp::setup()
                                   windowJSON.getValueForKey<float>( ".backgroundColour_g" ),
                                   windowJSON.getValueForKey<float>( ".backgroundColour_b" )
                                   );
+        
+        backgroundExpanded_ = windowJSON.getValueForKey<bool>( ".backgroundExpanded" );
         
         JsonTree layersJSON = json.getChild( "layers" );
         
@@ -111,9 +121,13 @@ void BlendingModesProjectApp::cleanup()
     windowJSON.addChild( JsonTree( "backgroundColour_g", backgroundColour_.g ) );
     windowJSON.addChild( JsonTree( "backgroundColour_b", backgroundColour_.b ) );
     
+    windowJSON.addChild( JsonTree( "backgroundExpanded", backgroundExpanded_ ) );
+    
     json.addChild( windowJSON );
     
-    json.write( "/Users/charlie/Desktop/test.json" );
+    string homeDir = getenv( "HOME" );
+    
+    json.write( homeDir + "/Desktop/test.json" );
 }
 
 void BlendingModesProjectApp::keyDown( KeyEvent event )
@@ -170,62 +184,116 @@ void BlendingModesProjectApp::draw()
     
     ImGui::Begin( "Layers" );
     
-    if ( ImGui::BeginMenu( "New" ) )
+    ImGui::Text( "Add a new:" );
+    
+    ImGui::SameLine();
+    
+    ImGui::SetCursorPosY( ImGui::GetCursorPosY() - 2 );
+    
+    if ( ImGui::Button( "File" ) )
     {
-        if ( ImGui::MenuItem( "File" ) )
-        {
-            layers_.push_back( new LayerFile() );
-            
-            dirty_ = true;
-        }
+        layers_.push_back( new LayerFile() );
         
-        if ( ImGui::MenuItem( "Solid" ) )
-        {
-            layers_.push_back( new LayerSolid() );
-            
-            dirty_ = true;
-        }
-        
-        if ( ImGui::MenuItem( "Checkerboard" ) )
-        {
-            layers_.push_back( new LayerCheckerBoard() );
-            
-            dirty_ = true;
-        }
-        
-        if ( ImGui::MenuItem( "Gradient" ) )
-        {
-            layers_.push_back( new LayerGradient() );
-            
-            dirty_ = true;
-        }
-        
-        ImGui::EndMenu();
+        dirty_ = true;
     }
     
-    int i = 0;
+    ImGui::SameLine();
+    
+    if ( ImGui::Button( "Solid" ) )
+    {
+        layers_.push_back( new LayerSolid() );
+        
+        dirty_ = true;
+    }
+    
+    ImGui::SameLine();
+    
+    if ( ImGui::Button( "Checkerboard" ) )
+    {
+        layers_.push_back( new LayerCheckerBoard() );
+        
+        dirty_ = true;
+    }
+    
+    ImGui::SameLine();
+    
+    if ( ImGui::Button( "Gradient" ) )
+    {
+        layers_.push_back( new LayerGradient() );
+        
+        dirty_ = true;
+    }
+    
+    ImGui::Separator();
+    ImGui::Separator();
+    
+    Layer * toMoveUp = nullptr;
+    Layer * toMoveDown = nullptr;
+    Layer * toDelete = nullptr;
     
     for ( auto layer = layers_.rbegin(); layer != layers_.rend(); ++layer )
     {
-        if( (*layer)->gui( i ) ) dirty_ = true;
+        LayerActions response = ( *layer )->gui( layer != layers_.rbegin(), next( layer ) != layers_.rend() );
         
-        i++;
+        if ( response.dirty ) dirty_ = true;
+        
+        if ( response.deleteLayer ) toDelete = ( *layer );
+        
+        if ( response.moveUp ) toMoveUp = ( *layer );
+        
+        if ( response.moveDown ) toMoveDown = ( *layer );
     }
     
     ImGui::Separator();
     ImGui::Separator();
     
-    if ( ImGui::TreeNode( ( "Background" ) ) )
+    ImGui::SetNextItemOpen( backgroundExpanded_ );
+    
+    backgroundExpanded_ = ImGui::TreeNode( ( "Background" ) );
+    
+    if ( backgroundExpanded_ )
     {
-        if( ImGui::ColorPicker3( "Background", &backgroundColour_ ) )
-        {
-            dirty_ = true;
-        }
+        if ( ImGui::ColorPicker3( "Background", &backgroundColour_ ) ) dirty_ = true;
         
         ImGui::TreePop();
     }
     
     ImGui::End();
+    
+    if ( toDelete != nullptr )
+    {
+        layers_.erase( remove( layers_.begin(), layers_.end(), toDelete ), layers_.end() );
+        
+        delete toDelete;
+        
+        dirty_ = true;
+    }
+    
+    if ( toMoveUp != nullptr )
+    {
+        auto iter = find( layers_.begin(), layers_.end(), toMoveUp );
+        
+        long oldIndex = std::distance( layers_.begin(), iter );
+        
+        long newIndex = oldIndex + 1;
+        
+        rotate( layers_.begin() + oldIndex, layers_.begin() + oldIndex + 1, layers_.begin() + newIndex + 1);
+        
+        dirty_ = true;
+    }
+    
+    if ( toMoveDown != nullptr )
+    {
+        auto iter = find( layers_.begin(), layers_.end(), toMoveDown );
+        
+        long oldIndex = std::distance( layers_.begin(), iter );
+        
+        long newIndex = oldIndex - 1;
+        
+        std::rotate( layers_.rend() - oldIndex - 1, layers_.rend() - oldIndex, layers_.rend() - newIndex );
+        
+        dirty_ = true;
+    }
 }
 
 CINDER_APP( BlendingModesProjectApp, RendererGl )

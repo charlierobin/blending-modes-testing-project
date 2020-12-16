@@ -12,13 +12,14 @@ public:
     
     cinder::SurfaceRef render() override;
     
-//    bool customGUI( int, bool ) override;
+    bool customGUI( bool ) override;
     
-//    void customJSON( cinder::JsonTree * ) override;
+    void customJSON( cinder::JsonTree * ) override;
     
 private:
     
-//    cinder::Color colour_;
+    cinder::Color startColour_;
+    cinder::Color endColour_;
     
 };
 

@@ -55,6 +55,8 @@ Layer * Layer::newFrom( cinder::JsonTree json )
 
 Layer::Layer( std::string name, std::string type )
 {
+    id_ = generateUUID();
+    
     layerType_ = type;
     
     layerName_ = name;
@@ -62,10 +64,14 @@ Layer::Layer( std::string name, std::string type )
     visible_ = true;
     
     blendMode_ = "Normal";
+    
+    expanded_ = false;
 }
 
 Layer::Layer( JsonTree json )
 {
+    id_ = json.getValueForKey<string>( ".id" );
+    
     layerType_ = json.getValueForKey<string>( ".type" );
     
     layerName_ = json.getValueForKey<string>( ".name" );
@@ -73,6 +79,38 @@ Layer::Layer( JsonTree json )
     visible_ = json.getValueForKey<bool>( ".visible" );
     
     blendMode_ = json.getValueForKey<string>( ".blendMode" );
+    
+    expanded_ = json.getValueForKey<bool>( ".expanded" );
+}
+
+string Layer::generateUUID() {
+    
+    char buffer[128];
+    
+    std::string result = "";
+    
+    FILE* pipe = popen( "uuidgen", "r" );
+    
+    if ( ! pipe ) throw runtime_error( "popen() failed" );
+    
+    try
+    {
+        while ( ! feof( pipe ) )
+        {
+            if ( fgets( buffer, 128, pipe ) != NULL ) result += buffer;
+        }
+    }
+    catch (...)
+    {
+        pclose( pipe );
+        throw;
+    }
+    
+    pclose( pipe );
+    
+    result.erase( result.find_last_not_of( " \n\r\t" ) + 1 );
+    
+    return result;
 }
 
 SurfaceRef Layer::render()
@@ -142,23 +180,69 @@ void Layer::compositeOnTo( Surface * surface )
     }
 }
 
-bool Layer::customGUI( int i, bool dirty )
+bool Layer::customGUI( bool dirty )
 {
     return dirty;
 }
 
-bool Layer::gui( int i )
+LayerActions Layer::gui( bool isNotFirst, bool isNotLast )
 {
-    ImGui::PushID( i );
+    ImGui::PushID( &id_ );
     
     bool dirty = false;
+    bool moveUp = false;
+    bool moveDown = false;
+    bool deleteMe = false;
     
-    if ( ImGui::TreeNode( ( layerName_.c_str() ) ) )
+    ImGui::SetNextItemOpen( expanded_ );
+    
+    expanded_ = ImGui::TreeNode( ( layerName_.c_str() ) );
+    
+    if ( expanded_ )
     {
-        if ( ImGui::Checkbox( "Visible", &visible_ ) )
+        if ( ImGui::Button( "Delete?" ) )
         {
-            dirty = true;
+            ImGui::OpenPopup( "Delete layer?" );
         }
+        
+        if ( ImGui::BeginPopupModal( "Delete layer?" ) )
+        {
+            ImGui::Text( "Are you sure? You cannot undo this action." );
+            
+            if ( ImGui::Button( "Yes" ) )
+            {
+                ImGui::CloseCurrentPopup();
+                
+                deleteMe = true;
+            }
+            
+            ImGui::SameLine();
+            
+            if ( ImGui::Button( "No" ) )
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            
+            ImGui::EndPopup();
+        }
+        
+        if ( isNotFirst )
+        {
+            ImGui::SameLine();
+            
+            if ( ImGui::Button( "Move up" ) ) moveUp = true;
+        }
+        
+        if ( isNotLast )
+        {
+            ImGui::SameLine();
+            
+            if ( ImGui::Button( "Move down" ) ) moveDown = true;
+        }
+        
+        ImGui::SameLine();
+        
+        if ( ImGui::Checkbox( "Visible", &visible_ ) ) dirty = true;
         
         ImGui::Separator();
         
@@ -185,14 +269,14 @@ bool Layer::gui( int i )
         
         ImGui::Separator();
         
-        dirty = customGUI( i, dirty );
+        dirty = customGUI( dirty );
         
         ImGui::TreePop();
     }
     
     ImGui::PopID();
     
-    return dirty;
+    return { dirty, moveUp, moveDown, deleteMe };
 }
 
 void Layer::customJSON( JsonTree * json )
@@ -203,11 +287,14 @@ JsonTree Layer::asJSON()
 {
     JsonTree json = JsonTree::makeObject();
     
+    json.addChild( JsonTree( "id", id_ ) );
     json.addChild( JsonTree( "type", layerType_ ) );
     
     json.addChild( JsonTree( "name", layerName_ ) );
     json.addChild( JsonTree( "visible", visible_ ) );
     json.addChild( JsonTree( "blendMode", blendMode_ ) );
+    
+    json.addChild( JsonTree( "expanded", expanded_ ) );
     
     JsonTree custom = JsonTree::makeObject( "custom" );
     

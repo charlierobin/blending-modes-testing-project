@@ -19,7 +19,7 @@ SurfaceRef LayerCheckerBoard::render()
     return surface;
 }
 
-bool LayerCheckerBoard::customGUI( int i, bool dirty )
+bool LayerCheckerBoard::customGUI( bool dirty )
 {
 //    if ( ImGui::ColorPicker3( "Colour", &colour_ ) )
 //    {

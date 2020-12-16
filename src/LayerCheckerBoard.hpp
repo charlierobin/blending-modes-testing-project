@@ -12,7 +12,7 @@ public:
     
     cinder::SurfaceRef render() override;
     
-    bool customGUI( int, bool ) override;
+    bool customGUI( bool ) override;
     
     void customJSON( cinder::JsonTree * ) override;
     
