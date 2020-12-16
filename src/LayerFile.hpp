@@ -20,6 +20,8 @@ private:
     
     std::string filepath_;
     
+    bool error_;
+    
 };
 
 #endif /* LayerFile_hpp */

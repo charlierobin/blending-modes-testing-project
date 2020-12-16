@@ -10,22 +10,48 @@ LayerFile::LayerFile( string filepath ) :  Layer( "File", "LayerFile" )
 
 LayerFile::LayerFile ( cinder::JsonTree json ) : Layer( json )
 {
-//    JsonTree custom = json.getChild( "custom" );
+    //    JsonTree customJSON = json.getChild( "custom" );
+    //    filepath_ = customJSON.getValueForKey<string>( ".filepath" );
+    
+    //    same as...
     
     filepath_ = json.getValueForKey<string>( ".custom.filepath" );
-};
+    
+    fs::path testPath( filepath_ );
+    
+    error_ = false;
+    
+    if( ! fs::exists( testPath ) ) error_ = true;
+}
 
 SurfaceRef LayerFile::render()
 {
     if ( filepath_ == "" ) return nullptr;
     
-    SurfaceRef surface = Surface::create( loadImage( filepath_ ) );
+    fs::path testPath( filepath_ );
+    
+    if ( ! fs::exists( testPath ) )
+    {
+        error_ = true;
+        
+        return nullptr;
+    }
+    
+    error_ = false;
+    
+    SurfaceRef surface = Surface::create( loadImage( testPath.native() ) );
     
     return surface;
 }
 
 bool LayerFile::customGUI( int i, bool dirty )
 {
+    vec4 filePathTextColour = vec4( 0, 1, 0, 1 );
+    
+    if ( error_ ) filePathTextColour = vec4( 1, 0, 0, 1 );
+
+    ImGui::TextColored( filePathTextColour, "%s", filepath_.c_str() );
+    
     if ( ImGui::Button( "Select file..." ) )
     {
         fs::path result = app::getOpenFilePath();

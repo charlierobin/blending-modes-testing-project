@@ -20,6 +20,8 @@
 		5323E6B20EAFCA74003A9687 /* CoreVideo.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5323E6B10EAFCA74003A9687 /* CoreVideo.framework */; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		AF2719987848423B8901B477 /* BlendingModesProjectApp.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B8A49B7CDD444553981B7F44 /* BlendingModesProjectApp.cpp */; };
+		CB0020972589F00A0086C93C /* LayerCheckerBoard.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB0020952589F00A0086C93C /* LayerCheckerBoard.cpp */; };
+		CB00209A2589F2DA0086C93C /* LayerGradient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CB0020982589F2DA0086C93C /* LayerGradient.cpp */; };
 		CBE76F8F258903AC00F68CB0 /* LayerSolid.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBE76F8D258903AC00F68CB0 /* LayerSolid.cpp */; };
 		CBE76F922589058E00F68CB0 /* LayerFile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBE76F902589058E00F68CB0 /* LayerFile.cpp */; };
 		CBF64DF22587691B00933461 /* Layer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CBF64DF02587691B00933461 /* Layer.cpp */; };
@@ -45,6 +47,10 @@
 		6F4F807FF44C4E47BFBC14AF /* Resources.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = Resources.h; path = ../include/Resources.h; sourceTree = "<group>"; };
 		8D1107320486CEB800E47090 /* BlendingModesProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BlendingModesProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B8A49B7CDD444553981B7F44 /* BlendingModesProjectApp.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.cpp; name = BlendingModesProjectApp.cpp; path = ../src/BlendingModesProjectApp.cpp; sourceTree = "<group>"; };
+		CB0020952589F00A0086C93C /* LayerCheckerBoard.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerCheckerBoard.cpp; path = ../src/LayerCheckerBoard.cpp; sourceTree = "<group>"; };
+		CB0020962589F00A0086C93C /* LayerCheckerBoard.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LayerCheckerBoard.hpp; path = ../src/LayerCheckerBoard.hpp; sourceTree = "<group>"; };
+		CB0020982589F2DA0086C93C /* LayerGradient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerGradient.cpp; path = ../src/LayerGradient.cpp; sourceTree = "<group>"; };
+		CB0020992589F2DA0086C93C /* LayerGradient.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LayerGradient.hpp; path = ../src/LayerGradient.hpp; sourceTree = "<group>"; };
 		CBE76F8D258903AC00F68CB0 /* LayerSolid.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerSolid.cpp; path = ../src/LayerSolid.cpp; sourceTree = "<group>"; };
 		CBE76F8E258903AC00F68CB0 /* LayerSolid.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = LayerSolid.hpp; path = ../src/LayerSolid.hpp; sourceTree = "<group>"; };
 		CBE76F902589058E00F68CB0 /* LayerFile.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = LayerFile.cpp; path = ../src/LayerFile.cpp; sourceTree = "<group>"; };
@@ -92,6 +98,10 @@
 				CBE76F8E258903AC00F68CB0 /* LayerSolid.hpp */,
 				CBE76F902589058E00F68CB0 /* LayerFile.cpp */,
 				CBE76F912589058E00F68CB0 /* LayerFile.hpp */,
+				CB0020952589F00A0086C93C /* LayerCheckerBoard.cpp */,
+				CB0020962589F00A0086C93C /* LayerCheckerBoard.hpp */,
+				CB0020982589F2DA0086C93C /* LayerGradient.cpp */,
+				CB0020992589F2DA0086C93C /* LayerGradient.hpp */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -236,8 +246,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				AF2719987848423B8901B477 /* BlendingModesProjectApp.cpp in Sources */,
+				CB00209A2589F2DA0086C93C /* LayerGradient.cpp in Sources */,
 				CBF64DF22587691B00933461 /* Layer.cpp in Sources */,
 				CBE76F8F258903AC00F68CB0 /* LayerSolid.cpp in Sources */,
+				CB0020972589F00A0086C93C /* LayerCheckerBoard.cpp in Sources */,
 				CBE76F922589058E00F68CB0 /* LayerFile.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

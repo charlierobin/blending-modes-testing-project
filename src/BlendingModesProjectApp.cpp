@@ -10,6 +10,8 @@
 
 #include "LayerSolid.hpp"
 #include "LayerFile.hpp"
+#include "LayerCheckerBoard.hpp"
+#include "LayerGradient.hpp"
 
 using namespace ci;
 using namespace ci::app;
@@ -128,6 +130,18 @@ void BlendingModesProjectApp::keyDown( KeyEvent event )
         
         dirty_ = true;
     }
+    else if ( event.getCode() == KeyEvent::KEY_c )
+    {
+        layers_.push_back( new LayerCheckerBoard() );
+        
+        dirty_ = true;
+    }
+    else if ( event.getCode() == KeyEvent::KEY_g )
+    {
+        layers_.push_back( new LayerGradient() );
+        
+        dirty_ = true;
+    }
 }
 
 void BlendingModesProjectApp::update()
@@ -158,16 +172,30 @@ void BlendingModesProjectApp::draw()
     
     if ( ImGui::BeginMenu( "New" ) )
     {
-        if ( ImGui::MenuItem( "File", "Ctrl+F" ) )
+        if ( ImGui::MenuItem( "File" ) )
         {
             layers_.push_back( new LayerFile() );
             
             dirty_ = true;
         }
         
-        if ( ImGui::MenuItem( "Solid", "Ctrl+S" ) )
+        if ( ImGui::MenuItem( "Solid" ) )
         {
             layers_.push_back( new LayerSolid() );
+            
+            dirty_ = true;
+        }
+        
+        if ( ImGui::MenuItem( "Checkerboard" ) )
+        {
+            layers_.push_back( new LayerCheckerBoard() );
+            
+            dirty_ = true;
+        }
+        
+        if ( ImGui::MenuItem( "Gradient" ) )
+        {
+            layers_.push_back( new LayerGradient() );
             
             dirty_ = true;
         }

@@ -2,18 +2,26 @@
 
 #include "LayerFile.hpp"
 #include "LayerSolid.hpp"
+#include "LayerCheckerBoard.hpp"
+#include "LayerGradient.hpp"
 
 #include "cinder/ip/Blend.h"
+
 #include "cinder/ip/Screen.h"
 #include "cinder/ip/Add.h"
 #include "cinder/ip/Subtract.h"
 #include "cinder/ip/Multiply.h"
+#include "cinder/ip/Divide.h"
+#include "cinder/ip/Difference.h"
+#include "cinder/ip/Lighten.h"
+#include "cinder/ip/Darken.h"
+#include "cinder/ip/Hue.h"
+#include "cinder/ip/Color.h"
+#include "cinder/ip/Saturation.h"
+#include "cinder/ip/Luminosity.h"
 
 using namespace ci;
 using namespace std;
-
-//class LayerFile;
-//class LayerSolid;
 
 Layer * Layer::newFrom( cinder::JsonTree json )
 {
@@ -29,9 +37,17 @@ Layer * Layer::newFrom( cinder::JsonTree json )
     {
         layer = new LayerSolid( json );
     }
+    else if ( type == "LayerCheckerBoard" )
+    {
+        layer = new LayerCheckerBoard( json );
+    }
+    else if ( type == "LayerGradient" )
+    {
+        layer = new LayerGradient( json );
+    }
     else
     {
-        // whoops, exception
+        // whoops, exception?
     }
     
     return layer;
@@ -55,7 +71,7 @@ Layer::Layer( JsonTree json )
     layerName_ = json.getValueForKey<string>( ".name" );
     
     visible_ = json.getValueForKey<bool>( ".visible" );
-
+    
     blendMode_ = json.getValueForKey<string>( ".blendMode" );
 }
 
@@ -88,6 +104,38 @@ void Layer::compositeOnTo( Surface * surface )
     {
         ip::multiply( surface, *layer );
     }
+    else if ( blendMode_ == "Divide" )
+    {
+        ip::divide( surface, *layer );
+    }
+    else if ( blendMode_ == "Difference" )
+    {
+        ip::difference( surface, *layer );
+    }
+    else if ( blendMode_ == "Lighten" )
+    {
+        ip::lighten( surface, *layer );
+    }
+    else if ( blendMode_ == "Darken" )
+    {
+        ip::darken( surface, *layer );
+    }
+    else if ( blendMode_ == "Hue" )
+    {
+        ip::hue( surface, *layer );
+    }
+    else if ( blendMode_ == "Colour" )
+    {
+        ip::color( surface, *layer );
+    }
+    else if ( blendMode_ == "Saturation" )
+    {
+        ip::saturation( surface, *layer );
+    }
+    else if ( blendMode_ == "Luminosity" )
+    {
+        ip::luminosity( surface, *layer );
+    }
     else
     {
         ip::blend( surface, *layer );
@@ -112,16 +160,16 @@ bool Layer::gui( int i )
             dirty = true;
         }
         
-        const char* names[] = { "Normal", "Screen", "Add", "Subtract", "Multiply" };
+        ImGui::Separator();
+        
+        const char* names[] = { "Normal", "Screen", "Add", "Subtract", "Multiply", "Divide", "Difference", "Lighten", "Darken", "Hue", "Colour", "Saturation", "Luminosity" };
+        
+        ImGui::Text( "Blend mode:" );
         
         if ( ImGui::Button( blendMode_.c_str() ) ) ImGui::OpenPopup( "blend_modes_popup" );
         
         if ( ImGui::BeginPopup( "blend_modes_popup" ) )
         {
-            ImGui::Text( "Blend modes" );
-            
-            ImGui::Separator();
-            
             for ( auto name : names )
             {
                 if ( ImGui::Selectable( name ) )

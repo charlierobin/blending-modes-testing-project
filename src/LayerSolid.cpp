@@ -11,14 +11,14 @@ LayerSolid::LayerSolid( Color colour ) : Layer( "Solid", "LayerSolid" )
 
 LayerSolid::LayerSolid ( JsonTree json ) : Layer( json )
 {
-    JsonTree custom = json.getChild( "custom" );
+    JsonTree customJSON = json.getChild( "custom" );
     
     colour_ = Color(
-                    custom.getValueForKey<float>( ".colour_r" ),
-                    custom.getValueForKey<float>( ".colour_g" ),
-                    custom.getValueForKey<float>( ".colour_b" )
+                    customJSON.getValueForKey<float>( ".colour_r" ),
+                    customJSON.getValueForKey<float>( ".colour_g" ),
+                    customJSON.getValueForKey<float>( ".colour_b" )
                     );
-};
+}
 
 SurfaceRef LayerSolid::render()
 {
